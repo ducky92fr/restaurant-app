@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-const url = process.env.REACT_APP_ITEMS_SERVICE_URL || "http://localhost:80";
+const url =
+  `${process.env.REACT_APP_ITEMS_SERVICE_URL}/api` || "http://localhost:80";
 
 function ItemsPage() {
   const [item, setItem] = useState("");

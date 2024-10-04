@@ -6,7 +6,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import { FaPen } from "react-icons/fa6";
 
 const url =
-  process.env.REACT_APP_DISCOUNTS_SERVICE_URL || "http://localhost:80";
+  `${process.env.REACT_APP_DISCOUNTS_SERVICE_URL}/api` || "http://localhost:80";
 
 function CouponPageList() {
   const [coupons, setCoupons] = useState([]);

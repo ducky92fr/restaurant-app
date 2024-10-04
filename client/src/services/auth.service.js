@@ -3,7 +3,9 @@ import axios from "axios";
 class AuthService {
   constructor() {
     this.api = axios.create({
-      baseURL: process.env.REACT_APP_AUTH_SERVICE_URL || "http://localhost:80",
+      baseURL:
+        `${process.env.REACT_APP_AUTH_SERVICE_URL}/api` ||
+        "http://localhost:80",
     });
 
     // Automatically set JWT token on the request headers for every request

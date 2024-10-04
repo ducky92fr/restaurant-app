@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const url =
-  process.env.REACT_APP_DISCOUNTS_SERVICE_URL || "http://localhost:80";
+  `${process.env.REACT_APP_DISCOUNTS_SERVICE_URL}/api` || "http://localhost:80";
 
 function CreateCoupon() {
   const [name, setName] = useState("");
@@ -47,7 +47,7 @@ function CreateCoupon() {
     const requestBody = { name, start, end, discount };
 
     axios
-      .post(`${url}/discounts/coupons`, requestBody)
+      .post(`${url}/api/discounts/coupons`, requestBody)
       .then((response) => {
         if (response.status === 200) {
           console.log(response.data);

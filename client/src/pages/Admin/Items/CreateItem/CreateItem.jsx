@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const url = process.env.REACT_APP_ITEMS_SERVICE_URL || "http://localhost:80";
+const url =
+  `${process.env.REACT_APP_ITEMS_SERVICE_URL}/api` || "http://localhost:80";
 
 function CreateItem() {
   const [name, setName] = useState("");
