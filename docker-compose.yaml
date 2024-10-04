@@ -1,0 +1,49 @@
+services:
+  frontend:
+    build:
+      context: ./client
+      dockerfile: build.Dockerfile
+    ports:
+      - "8080:80"
+  backend-auth-service:
+    build:
+      context: ./backend/auth
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./backend/auth/.env
+    # depends_on:
+    #   - db
+
+  backend-discounts-service:
+    build:
+      context: ./backend/discounts
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    env_file:
+      - ./backend/discounts/.env
+    # depends_on:
+    #   - db
+
+  backend-items-service:
+    build:
+      context: ./backend/items
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    env_file:
+      - ./backend/items/.env
+
+  haproxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend-auth-service
+      - backend-discounts-service
+      - backend-items-service

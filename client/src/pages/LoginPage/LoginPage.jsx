@@ -2,8 +2,8 @@ import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/auth.context";
 import authService from "../../services/auth.service";
-import { MdEmail } from "react-icons/md"
-import { FaLock } from "react-icons/fa6"
+import { MdEmail } from "react-icons/md";
+import { FaLock } from "react-icons/fa6";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -53,7 +53,14 @@ function LoginPage() {
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <MdEmail class="w-[1.15rem] h-[1.15rem] text-gray-400" />
               </div>
-              <input className="input-forms" type="email" name="email" placeholder="Email" value={email} onChange={handleEmail} />
+              <input
+                className="input-forms"
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={email}
+                onChange={handleEmail}
+              />
             </div>
             <div className="relative">
               <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -69,14 +76,16 @@ function LoginPage() {
               />
             </div>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
-            <button className="button" type="submit">Login</button>
+            <button className="button" type="submit">
+              Login
+            </button>
             <p>Don't have an account yet?</p>
-            <Link to={"/signup"}> <p className="sign-up-link">Sign Up</p></Link>
+            <Link to={"/signup"}>
+              {" "}
+              <p className="sign-up-link">Sign Up</p>
+            </Link>
           </div>
         </form>
-
-
-
       </div>
     </div>
   );
