@@ -21,6 +21,33 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Download Ansible Inventory from S3
+        run: |
+          aws s3 cp s3://terraform-state-restaurant-app/ansible/inventory.yml ./ansible/inventory.yml
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ID_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
+          AWS_DEFAULT_REGION: eu-west-3
+      - name: Extract backend IPs from inventory
+        id: extract_ips
+        run: |
+          AUTH_IP=$(grep -A 1 'my-backend-auth' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
+          DISCOUNTS_IP=$(grep -A 1 'my-backend-discount' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
+          ITEMS_IP=$(grep -A 1 'my-backend-items' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
+          FRONTEND_IP=$(grep -A 1 'my-frontend' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
+          echo "AUTH_IP=$AUTH_IP" >> $GITHUB_ENV
+          echo "DISCOUNTS_IP=$DISCOUNTS_IP" >> $GITHUB_ENV
+          echo "ITEMS_IP=$ITEMS_IP" >> $GITHUB_ENV
+          echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
+
+      - name: Generate HAProxy config from template
+        run: |
+          sed -e "s/{{AUTH_IP}}/${{ env.AUTH_IP }}/g" \
+              -e "s/{{DISCOUNTS_IP}}/${{ env.DISCOUNTS_IP }}/g" \
+              -e "s/{{ITEMS_IP}}/${{ env.ITEMS_IP }}/g" \
+              -e "s/{{FRONTEND_IP}}/${{ env.FRONTEND_IP }}/g" \
+              haproxy/haproxy.cfg.template > proxy/haproxy.cfg
+
       # Step 3: Log in to DockerHub
       - name: Log in to DockerHub
         uses: docker/login-action@v2
@@ -47,19 +74,6 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/haproxy:latest
 
       # Step 6: Download Ansible Inventory from S3
-      - name: Download Ansible Inventory from S3
-        run: |
-          aws s3 cp s3://terraform-state-restaurant-app/ansible/inventory.yml ./ansible/inventory.yml
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ID_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
-          AWS_DEFAULT_REGION: eu-west-3
-
-      - name: Extract HAProxy IP from inventory
-        id: extract_haproxy_ip
-        run: |
-          HAPROXY_IP=$(grep -A 1 'haproxy' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
-          echo "HAPROXY_IP=$HAPROXY_IP" >> $GITHUB_ENV
 
       - name: Create SSH Key
         run: |
