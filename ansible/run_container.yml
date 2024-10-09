@@ -12,30 +12,35 @@
         name: "{{ dockerhub_username }}/backend-auth-service"
         tag: latest
         source: pull
+      when: inventory_hostname == 'my-backend-auth'
 
     - name: Pull Docker image for discounts service
       docker_image:
         name: "{{ dockerhub_username }}/backend-discounts-service"
         tag: latest
         source: pull
+      when: inventory_hostname == 'my-backend-discount'
 
     - name: Pull Docker image for items service
       docker_image:
         name: "{{ dockerhub_username }}/backend-items-service"
         tag: latest
         source: pull
+      when: inventory_hostname == 'my-backend-items'
 
     - name: Pull Docker image for HAProxy
       docker_image:
         name: "{{ dockerhub_username }}/haproxy"
         tag: latest
         source: pull
+      when: inventory_hostname == 'my-haproxy'
 
     - name: Pull Docker image for frontend
       docker_image:
         name: "{{ dockerhub_username }}/frontend"
         tag: latest
         source: pull
+      when: inventory_hostname == 'my-frontend'
 
     - name: Run auth service container
       docker_container:
@@ -45,6 +50,7 @@
         restart_policy: always
         ports:
           - "3001:3001"
+      when: inventory_hostname == 'my-backend-auth'
 
     - name: Run discounts service container
       docker_container:
@@ -54,6 +60,7 @@
         restart_policy: always
         ports:
           - "3002:3002"
+      when: inventory_hostname == 'my-backend-discount'
 
     - name: Run items service container
       docker_container:
@@ -63,6 +70,7 @@
         restart_policy: always
         ports:
           - "3003:3003"
+      when: inventory_hostname == 'my-backend-items'
 
     - name: Run HAProxy container
       docker_container:
@@ -72,6 +80,7 @@
         restart_policy: always
         ports:
           - "80:80"
+      when: inventory_hostname == 'my-haproxy'
 
     - name: Run frontend container
       docker_container:
@@ -79,3 +88,6 @@
         image: "{{ dockerhub_username }}/frontend:latest"
         state: started
         restart_policy: always
+        ports:
+          - "80:80"
+      when: inventory_hostname == 'my-frontend'
