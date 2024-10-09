@@ -1,0 +1,31 @@
+all:
+  hosts:
+    my-backend-auth:
+      ansible_host: 10.0.2.57
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -i /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem -W %h:%p ubuntu@13.38.32.154" -o StrictHostKeyChecking=no'
+
+    my-backend-discount:
+      ansible_host: 10.0.2.180
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -i /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem -W %h:%p ubuntu@13.38.32.154" -o StrictHostKeyChecking=no'
+
+    my-backend-items:
+      ansible_host: 10.0.2.39
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem
+      ansible_ssh_common_args: '-o ProxyCommand="ssh -i /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem -W %h:%p ubuntu@13.38.32.154" -o StrictHostKeyChecking=no'
+
+    my-frontend:
+      ansible_host: 15.237.220.197
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
+    my-haproxy:
+      ansible_host: 13.38.32.154
+      ansible_user: ubuntu
+      ansible_ssh_private_key_file: /Users/ducnguyen/Desktop/ironhack/generalUseRestaurant.pem
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
