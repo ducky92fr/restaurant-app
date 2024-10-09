@@ -1,0 +1,81 @@
+---
+- name: Deploy Docker containers
+  hosts: all
+  become: true
+  vars:
+    dockerhub_username: "{{ dockerhub_username }}"
+    dockerhub_token: "{{ dockerhub_token }}"
+
+  tasks:
+    - name: Pull Docker image for auth service
+      docker_image:
+        name: "{{ dockerhub_username }}/backend-auth-service"
+        tag: latest
+        source: pull
+
+    - name: Pull Docker image for discounts service
+      docker_image:
+        name: "{{ dockerhub_username }}/backend-discounts-service"
+        tag: latest
+        source: pull
+
+    - name: Pull Docker image for items service
+      docker_image:
+        name: "{{ dockerhub_username }}/backend-items-service"
+        tag: latest
+        source: pull
+
+    - name: Pull Docker image for HAProxy
+      docker_image:
+        name: "{{ dockerhub_username }}/haproxy"
+        tag: latest
+        source: pull
+
+    - name: Pull Docker image for frontend
+      docker_image:
+        name: "{{ dockerhub_username }}/frontend"
+        tag: latest
+        source: pull
+
+    - name: Run auth service container
+      docker_container:
+        name: backend-auth-service
+        image: "{{ dockerhub_username }}/backend-auth-service:latest"
+        state: started
+        restart_policy: always
+        ports:
+          - "3001:3001"
+
+    - name: Run discounts service container
+      docker_container:
+        name: backend-discounts-service
+        image: "{{ dockerhub_username }}/backend-discounts-service:latest"
+        state: started
+        restart_policy: always
+        ports:
+          - "3002:3002"
+
+    - name: Run items service container
+      docker_container:
+        name: backend-items-service
+        image: "{{ dockerhub_username }}/backend-items-service:latest"
+        state: started
+        restart_policy: always
+        ports:
+          - "3003:3003"
+
+    - name: Run HAProxy container
+      docker_container:
+        name: haproxy
+        image: "{{ dockerhub_username }}/haproxy:latest"
+        state: started
+        restart_policy: always
+        ports:
+          - "80:80"
+
+    - name: Run frontend container
+      docker_container:
+        name: frontend
+        image: "{{ dockerhub_username }}/frontend:latest"
+        state: started
+        restart_policy: always

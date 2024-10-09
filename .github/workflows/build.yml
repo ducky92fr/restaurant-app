@@ -1,0 +1,61 @@
+name: Deploy Restaurant App # This is the name of your workflow
+
+on: # This defines the event that triggers the workflow
+  push:
+    branches:
+      - main # Workflow will trigger on pushes to the 'main' branch
+
+jobs:
+  build-and-deploy: # Name of the job
+    runs-on: ubuntu-latest # Specifies the runner environment
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE20: true
+
+    steps: # Series of steps in the job
+      # Step 1: Checkout code
+      - name: Checkout code # First step: checking out the repository
+        uses: actions/checkout@v3 # GitHub-provided action to checkout the code
+
+      # Step 2: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Step 3: Log in to DockerHub
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Step 4: Build Docker Images for all components
+      - name: Build Docker Images # Building Docker images
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-auth-service:latest ./backend/auth
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-discounts-service:latest ./backend/discounts
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-items-service:latest ./backend/items
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest ./client
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/haproxy:latest ./proxy
+
+      # Step 5: Push Docker Images to DockerHub
+      - name: Push Docker Images to DockerHub
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend-auth-service:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend-discounts-service:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/backend-items-service:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/haproxy:latest
+
+      # Step 6: Download Ansible Inventory from S3
+      - name: Download Ansible Inventory from S3
+        run: |
+          aws s3 cp s3://terraform-state-restaurant-app/ansible/inventory.yml ./ansible/inventory.yml
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ID_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
+          AWS_DEFAULT_REGION: eu-west-3
+
+      # Step 7: Run Ansible Playbook to Deploy
+      - name: Run Ansible Playbook # Running Ansible playbook for deployment
+        run: |
+          ansible-playbook -i ./ansible/inventory.yml ./ansible/run_container.yml \
+          --extra-vars "dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }} dockerhub_token=${{ secrets.DOCKERHUB_TOKEN }}"
