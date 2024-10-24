@@ -17,3 +17,6 @@ spec:
           image: ducky92fr/frontend:latest
           ports:
             - containerPort: 80
+          env:
+            - name: "REACT_APP_AUTH_SERVICE_URL"
+              value: "haproxy-service.default"
