@@ -23,20 +23,14 @@ class AuthService {
 
   login = (requestBody) => {
     return this.api.post("/auth/login", requestBody);
-    // same as
-    // return axios.post("http://149.100.138.125:6001/auth/login");
   };
 
   signup = (requestBody) => {
     return this.api.post("/auth/signup", requestBody);
-    // same as
-    // return axios.post("http://149.100.138.125:6001/auth/singup");
   };
 
   verify = () => {
     return this.api.get("/auth/verify");
-    // same as
-    // return axios.post("http://149.100.138.125:6001/auth/verify");
   };
 }
 
