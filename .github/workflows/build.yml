@@ -35,10 +35,12 @@ jobs:
           DISCOUNTS_IP=$(grep -A 1 'my-backend-discount' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
           ITEMS_IP=$(grep -A 1 'my-backend-items' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
           FRONTEND_IP=$(grep -A 1 'my-frontend' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
+          HAPROXY_IP=$(grep -A 1 'my-haproxy' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
           echo "AUTH_IP=$AUTH_IP" >> $GITHUB_ENV
           echo "DISCOUNTS_IP=$DISCOUNTS_IP" >> $GITHUB_ENV
           echo "ITEMS_IP=$ITEMS_IP" >> $GITHUB_ENV
           echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
+          echo "HAPROXY_IP=$HAPROXY_IP" >> $GITHUB_ENV
 
       - name: Generate HAProxy config from template
         run: |
@@ -86,4 +88,4 @@ jobs:
       - name: Run Ansible Playbook # Running Ansible playbook for deployment
         run: |
           ansible-playbook -i ./ansible/inventory.yml ./ansible/run_container.yml \
-          --extra-vars "dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }} dockerhub_token=${{ secrets.DOCKERHUB_TOKEN }}"
+          --extra-vars "dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }} dockerhub_token=${{ secrets.DOCKERHUB_TOKEN }} haproxy_ip=${{ env.HAPROXY_IP }}"
