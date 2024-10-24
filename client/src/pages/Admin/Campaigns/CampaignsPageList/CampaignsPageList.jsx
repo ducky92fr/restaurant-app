@@ -5,8 +5,7 @@ import { Link } from "react-router-dom";
 import { FaTrashCan } from "react-icons/fa6";
 import { FaPen } from "react-icons/fa6";
 
-const url =
-  `${process.env.REACT_APP_CAMPAING_SERVICE_URL}/api` || "http://localhost:80";
+const url = `${process.env.HAPROXY_SERVICE_URL}/api` || "http://localhost:80";
 
 function CampaignsPageList() {
   const [campaigns, setCampaigns] = useState([]);

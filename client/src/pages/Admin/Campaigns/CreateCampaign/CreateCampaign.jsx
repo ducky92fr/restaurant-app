@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const url =
-  `${process.env.REACT_APP_CAMPAING_SERVICE_URL}/api` || "http://localhost:80";
+const url = `${process.env.HAPROXY_SERVICE_URL}/api` || "http://localhost:80";
 
 function CreateCampaign() {
   const [name, setName] = useState("");

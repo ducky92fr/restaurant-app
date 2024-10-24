@@ -9,7 +9,6 @@ function AuthProviderWrapper(props) {
   const [user, setUser] = useState(null);
   const [isAdmin, setisAdmin] = useState(false);
 
-
   const storeToken = (token) => {
     localStorage.setItem("authToken", token);
   };
@@ -23,7 +22,7 @@ function AuthProviderWrapper(props) {
       // Send a request to the server using axios
       /* 
         axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/auth/verify`,
+          `${process.env.HAPROXY_SERVICE_URL}/auth/verify`,
           { headers: { Authorization: `Bearer ${storedToken}` } }
         )
         .then((response) => {})
@@ -35,9 +34,9 @@ function AuthProviderWrapper(props) {
         .then((response) => {
           // If the server verifies that JWT token is valid  ✅
           const user = response.data;
-          console.log(user.role)
-          if (user.role === 'admin') {
-            setisAdmin(true)
+          console.log(user.role);
+          if (user.role === "admin") {
+            setisAdmin(true);
           }
           // Update state variables
           setIsLoggedIn(true);

@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
-const url =
-  `${process.env.REACT_APP_DISCOUNTS_SERVICE_URL}/api` || "http://localhost:80";
+const url = `${process.env.HAPROXY_SERVICE_URL}/api` || "http://localhost:80";
 
 function EditCoupon() {
   const [coupon, setCoupon] = useState("");
