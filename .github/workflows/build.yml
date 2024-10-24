@@ -65,7 +65,7 @@ jobs:
           docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-auth-service:latest ./backend/auth
           docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-discounts-service:latest ./backend/discounts
           docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/backend-items-service:latest ./backend/items
-          docker build --no-cache --build-arg HAPROXY_SERVICE_URL=http://${{ env.HAPROXY_IP }} -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest ./client
+          docker build --no-cache --build-arg REACT_APP_HAPROXY_SERVICE_URL=http://${{ env.HAPROXY_IP }} -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest ./client
           docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/haproxy:latest ./proxy
 
       # Step 5: Push Docker Images to DockerHub

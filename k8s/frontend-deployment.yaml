@@ -18,5 +18,5 @@ spec:
           ports:
             - containerPort: 80
           env:
-            - name: "HAPROXY_SERVICE_URL"
+            - name: "REACT_APP_HAPROXY_SERVICE_URL"
               value: "haproxy-service.default"
