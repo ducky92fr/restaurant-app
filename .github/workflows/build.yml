@@ -47,6 +47,8 @@ jobs:
               -e "s/{{ITEMS_IP}}/${{ env.ITEMS_IP }}/g" \
               -e "s/{{FRONTEND_IP}}/${{ env.FRONTEND_IP }}/g" \
               proxy/haproxy.cfg.template > proxy/haproxy.cfg
+              
+          echo "" >> proxy/haproxy.cfg
 
       # Step 3: Log in to DockerHub
       - name: Log in to DockerHub
