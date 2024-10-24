@@ -45,8 +45,7 @@
         restart_policy: always
         ports:
           - "80:80"
-        env:
-          HAPROXY_SERVICE_URL: "http://{{ haproxy_ip }}"
+
       when: inventory_hostname == 'my-haproxy'
 
     - name: Run frontend container
