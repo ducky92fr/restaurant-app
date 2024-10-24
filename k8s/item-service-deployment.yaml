@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: items-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: items
+  template:
+    metadata:
+      labels:
+        app: items
+    spec:
+      containers:
+        - name: items-container
+          image: ducky92fr/backend-items-service:latest
+          ports:
+            - containerPort: 3003
+          env:
+            - name: MONGODB_URI
+              value: "mongodb+srv://dionamite:Dionamite1!@portalformadores.mob88xm.mongodb.net/flor?retryWrites=true&w=majority&appName=PortalFormadores"

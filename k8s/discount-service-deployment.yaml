@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discounts-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discounts
+  template:
+    metadata:
+      labels:
+        app: discounts
+    spec:
+      containers:
+        - name: discounts-container
+          image: ducky92fr/backend-discounts-service:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: MONGODB_URI
+              value: "mongodb+srv://dionamite:Dionamite1!@portalformadores.mob88xm.mongodb.net/flor?retryWrites=true&w=majority&appName=PortalFormadores"

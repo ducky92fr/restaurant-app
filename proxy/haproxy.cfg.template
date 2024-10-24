@@ -34,3 +34,4 @@ backend items-backend
 
 backend frontend-backend
     server frontend1 {{FRONTEND_IP}}:80
+    
