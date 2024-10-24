@@ -7,6 +7,21 @@
     dockerhub_token: "{{ dockerhub_token }}"
 
   tasks:
+    # Stop and remove auth service container if it exists
+    - name: Stop and remove auth service container
+      docker_container:
+        name: backend-auth-service
+        state: absent
+      when: inventory_hostname == 'my-backend-auth'
+
+    # Remove auth service image
+    - name: Remove auth service image
+      docker_image:
+        name: "{{ dockerhub_username }}/backend-auth-service:latest"
+        state: absent
+      when: inventory_hostname == 'my-backend-auth'
+
+    # Pull and run auth service container
     - name: Run auth service container
       docker_container:
         name: backend-auth-service
@@ -17,6 +32,21 @@
           - "80:3001"
       when: inventory_hostname == 'my-backend-auth'
 
+    # Stop and remove discounts service container if it exists
+    - name: Stop and remove discounts service container
+      docker_container:
+        name: backend-discounts-service
+        state: absent
+      when: inventory_hostname == 'my-backend-discount'
+
+    # Remove discounts service image
+    - name: Remove discounts service image
+      docker_image:
+        name: "{{ dockerhub_username }}/backend-discounts-service:latest"
+        state: absent
+      when: inventory_hostname == 'my-backend-discount'
+
+    # Pull and run discounts service container
     - name: Run discounts service container
       docker_container:
         name: backend-discounts-service
@@ -27,6 +57,21 @@
           - "80:3002"
       when: inventory_hostname == 'my-backend-discount'
 
+    # Stop and remove items service container if it exists
+    - name: Stop and remove items service container
+      docker_container:
+        name: backend-items-service
+        state: absent
+      when: inventory_hostname == 'my-backend-items'
+
+    # Remove items service image
+    - name: Remove items service image
+      docker_image:
+        name: "{{ dockerhub_username }}/backend-items-service:latest"
+        state: absent
+      when: inventory_hostname == 'my-backend-items'
+
+    # Pull and run items service container
     - name: Run items service container
       docker_container:
         name: backend-items-service
@@ -37,6 +82,21 @@
           - "80:3003"
       when: inventory_hostname == 'my-backend-items'
 
+    # Stop and remove HAProxy container if it exists
+    - name: Stop and remove HAProxy container
+      docker_container:
+        name: haproxy
+        state: absent
+      when: inventory_hostname == 'my-haproxy'
+
+    # Remove HAProxy image
+    - name: Remove HAProxy image
+      docker_image:
+        name: "{{ dockerhub_username }}/haproxy:latest"
+        state: absent
+      when: inventory_hostname == 'my-haproxy'
+
+    # Pull and run HAProxy container
     - name: Run HAProxy container
       docker_container:
         name: haproxy
@@ -45,9 +105,23 @@
         restart_policy: always
         ports:
           - "80:80"
-
       when: inventory_hostname == 'my-haproxy'
 
+    # Stop and remove frontend container if it exists
+    - name: Stop and remove frontend container
+      docker_container:
+        name: frontend
+        state: absent
+      when: inventory_hostname == 'my-frontend'
+
+    # Remove frontend image
+    - name: Remove frontend image
+      docker_image:
+        name: "{{ dockerhub_username }}/frontend:latest"
+        state: absent
+      when: inventory_hostname == 'my-frontend'
+
+    # Pull and run frontend container
     - name: Run frontend container
       docker_container:
         name: frontend
