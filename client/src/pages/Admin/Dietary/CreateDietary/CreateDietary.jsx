@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const url = `${process.env.HAPROXY_SERVICE_URL}/api` || "http://localhost:80";
+const url =
+  `${process.env.REACT_APP_HAPROXY_SERVICE_URL}/api` || "http://localhost:80";
 
 function CreateDietary() {
   const [name, setName] = useState("");

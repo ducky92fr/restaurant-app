@@ -21,7 +21,7 @@ function LoginPage() {
 
     // Send a request to the server using axios
     /* 
-    axios.post(`${process.env.HAPROXY_SERVICE_URL}/auth/login`)
+    axios.post(`${process.env.REACT_APP_HAPROXY_SERVICE_URL}/auth/login`)
       .then((response) => {})
     */
 
