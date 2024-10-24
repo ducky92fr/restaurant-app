@@ -18,5 +18,7 @@ spec:
           ports:
             - containerPort: 3003
           env:
+            - name: PORT
+              value: "3003"
             - name: MONGODB_URI
               value: "mongodb+srv://dionamite:Dionamite1!@portalformadores.mob88xm.mongodb.net/flor?retryWrites=true&w=majority&appName=PortalFormadores"
