@@ -1,5 +1,3 @@
-# Simple HAProxy Configuration
-
 global
     log stdout format raw daemon
 
