@@ -1,4 +1,4 @@
-name: Deploy Restaurant App Project 1 # This is the name of your workflow
+name: Deploy Restaurant App EKS Project 2 # This is the name of your workflow
 
 on: # This defines the event that triggers the workflow
   workflow_dispatch:
@@ -14,30 +14,35 @@ jobs:
       - name: Checkout code # First step: checking out the repository
         uses: actions/checkout@v3 # GitHub-provided action to checkout the code
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ID_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_SECRET }}
+          aws-region: eu-west-3
+
+      - name: Install eksctl
+        run: |
+          curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/0.135.0/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+          sudo mv /tmp/eksctl /usr/local/bin
+
+      - name: Create EKS Cluster
+        run: |
+          eksctl get cluster --name restaurant-app-cluster --region eu-west-3 || \
+          eksctl create cluster -f eks-config/eks-config.yaml --wait
+
       # Step 2: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Download Ansible Inventory from S3
+      - name: Set Backend Service Names as Environment Variables
+        id: setup_serviceName
         run: |
-          aws s3 cp s3://terraform-state-restaurant-app/ansible/inventory.yml ./ansible/inventory.yml
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ID_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ACCESS_SECRET }}
-          AWS_DEFAULT_REGION: eu-west-3
-      - name: Extract backend IPs from inventory
-        id: extract_ips
-        run: |
-          AUTH_IP=$(grep -A 1 'my-backend-auth' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
-          DISCOUNTS_IP=$(grep -A 1 'my-backend-discount' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
-          ITEMS_IP=$(grep -A 1 'my-backend-items' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
-          FRONTEND_IP=$(grep -A 1 'my-frontend' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
-          HAPROXY_IP=$(grep -A 1 'my-haproxy' ansible/inventory.yml | awk '/ansible_host/ {print $2}')
-          echo "AUTH_IP=$AUTH_IP" >> $GITHUB_ENV
-          echo "DISCOUNTS_IP=$DISCOUNTS_IP" >> $GITHUB_ENV
-          echo "ITEMS_IP=$ITEMS_IP" >> $GITHUB_ENV
-          echo "FRONTEND_IP=$FRONTEND_IP" >> $GITHUB_ENV
-          echo "HAPROXY_IP=$HAPROXY_IP" >> $GITHUB_ENV
+          echo "AUTH_IP=auth-service" >> $GITHUB_ENV
+          echo "DISCOUNTS_IP=discounts-service" >> $GITHUB_ENV
+          echo "ITEMS_IP=items-service" >> $GITHUB_ENV
+          echo "FRONTEND_IP=frontend-service" >> $GITHUB_ENV
+          echo "HAPROXY_IP=haproxy-service" >> $GITHUB_ENV
 
       - name: Generate HAProxy config from template
         run: |
@@ -74,15 +79,10 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/frontend:latest
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/haproxy:latest
 
-      # Step 6: Download Ansible Inventory from S3
-
-      - name: Create SSH Key
+      - name: Configure kubectl
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" >  ~/your_key.pem
-          chmod 400  ~/your_key.pem
+          aws eks update-kubeconfig --name restaurant-app-cluster --region eu-west-3
 
-      # Step 7: Run Ansible Playbook to Deploy
-      - name: Run Ansible Playbook # Running Ansible playbook for deployment
+      - name: Deploy to EKS
         run: |
-          ansible-playbook -i ./ansible/inventory.yml ./ansible/run_container.yml \
-          --extra-vars "dockerhub_username=${{ secrets.DOCKERHUB_USERNAME }} dockerhub_token=${{ secrets.DOCKERHUB_TOKEN }} haproxy_ip=${{ env.HAPROXY_IP }}"
+          kubectl apply -f k8s
