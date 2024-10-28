@@ -23,7 +23,8 @@ jobs:
 
       - name: Install eksctl
         run: |
-          curl --silent --location  "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_arm64.zip" | tar xz -C /tmp
+          curl --silent --location "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_arm64.zip" -o /tmp/eksctl.zip
+          unzip /tmp/eksctl.zip -d /tmp
           sudo mv /tmp/eksctl /usr/local/bin
 
       - name: Create EKS Cluster
