@@ -30,7 +30,7 @@ jobs:
       - name: Create EKS Cluster
         run: |
           eksctl get cluster --name restaurant-app-cluster --region eu-west-3 || \
-          eksctl create cluster -f eks-config/eks-config.yaml --wait
+          eksctl create cluster -f eks-config/eks-config.yml
 
       # Step 2: Set up Docker Buildx
       - name: Set up Docker Buildx
